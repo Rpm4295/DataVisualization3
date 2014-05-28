@@ -1,0 +1,52 @@
+{"games": [
+	{
+		"hauntTurns": 2,
+		"totalTurns": 4,
+		"regularRooms": 1,
+		"itemRooms": 0,
+		"omenRooms": 5,
+		"eventRooms": 5,
+		"specialRooms": 5,
+		"winner": "betrayer"
+	},
+	{
+		"hauntTurns": 5,
+		"totalTurns": 9,
+		"regularRooms": 2,
+		"itemRooms": 3,
+		"omenRooms": 9,
+		"eventRooms": 9,
+		"specialRooms": 7,
+		"winner": "betrayer"
+	},
+	{
+		"hauntTurns": 7,
+		"totalTurns": 10,
+		"regularRooms": 2,
+		"itemRooms": 3,
+		"omenRooms": 8,
+		"eventRooms": 14,
+		"specialRooms": 10,
+		"winner": "betrayer"
+	},
+	{
+		"hauntTurns": 4,
+		"totalTurns": 8,
+		"regularRooms": 2,
+		"itemRooms": 2,
+		"omenRooms": 7,
+		"eventRooms": 10,
+		"specialRooms": 6,
+		"winner": "survivors"
+	},
+	{
+		"hauntTurns": 3,
+		"totalTurns": 7,
+		"regularRooms": 2,
+		"itemRooms": 2,
+		"omenRooms": 3,
+		"eventRooms": 9,
+		"specialRooms": 7,
+		"winner": "survivors"
+	}
+]}

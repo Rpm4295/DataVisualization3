@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	 <style>
+	 
+		body {
+			margin-left: 5em;
+			width: 1200px;
+		}
+	 
+	 </style>
+</head>
+<body bgcolor="#F0EAD6">
+
+		<!--
+		By:
+		Robert Massaro
+		Jeff Sherman
+		Alex Nowak
+		-->
+	
+		<input id="hauntTurns" type="text" class="newGame" placeholder="Rounds before Haunt">
+		<input id="totalTurns" type="text" class="newGame" placeholder= "Total Rounds">
+		<input id="regularRooms" type="text" class="newGame" placeholder="# Regular Rooms">
+		<input id="itemRooms" type="text" class="newGame" placeholder="# Item Rooms">
+		<input id="omenRooms" type="text" class="newGame" placeholder="# Omen Rooms">
+		<input id="eventRooms" type="text" class="newGame" placeholder="# Event Rooms">
+		<input id="specialRooms" type="text" class="newGame" placeholder="# Special Rooms">
+		<input id="winner" type="text" class="newGame" placeholder="Survivors or betrayer">
+		<button id="submit">Add New Game</button>
+		<br>
+		<h2 style="text-align:center; width:500px">Types of Rooms per game</h2>
+		<canvas id="rooms" width="500" height="400"></canvas>
+		<img src="roomDataKey.png" alt="Room Data">
+		<br>
+		<h2 style="text-align:center; width:500px">Who won? <font color="#513127">Betrayers</font> or <font color= "#F36E21">Survivors</font>?</h2>
+		<canvas id="win" width="500" height="400" text-align="center"></canvas>
+		<img src="winsKey.png" alt="Winss Data">
+		<br />
+		<h3><p id="winP" style="text-align:center; width:500px">hello</p></h3>
+		<h2 style="text-align:center; width:500px">How many turns and how long before the haunt?</h2>
+		<canvas id="turns" width="500" height="400"></canvas>
+		<img src="turnsKey.png" alt="Turns Data">
+		<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+		<script src="Chart.js-master/Chart.js"></script>
+		
+		
+		<script>
+			var rooms = document.getElementById("rooms");
+			var rmCtx = rooms.getContext('2d');
+			
+			var wins = document.getElementById("win");
+			var winCtx = wins.getContext('2d');
+			
+			var turns =document.getElementById("turns");
+			var turnCtx = turns.getContext('2d');
+			
+			var roomKey = new Image();
+			var turnsKey = new Image();
+			
+			roomKey.onload = function() {
+			rmCtx.drawImage(this, 800, 800);
+			};
+			
+			/*
+			roomKey.src = "roomDataKey.png";
+			turnsKey.src = "turnsKey.png";
+			
+			rmCtx.drawImage(roomKey,0,0);
+			turnCtx.drawImage(turnsKey,200,200);
+			*/
+			
+			var regularRooms = [];
+			var itemRooms = [];
+			var omenRooms = [];
+			var eventRooms = [];
+			var specialRooms = [];
+			var labelNames = [];
+			
+			var winners=[0,0];
+			
+			var totalTurns = [];
+			var hauntTurns = [];
+			
+			$("#submit").on("click", function (){ addGame(); });
+			
+			$(document).ready(function ()
+			{
+				$.getJSON("gameData.json", function(data)
+				{
+					$.each(data.games, function(index, game){
+						regularRooms.push(game.regularRooms);
+						itemRooms.push(game.itemRooms);
+						omenRooms.push(game.omenRooms);
+						eventRooms.push(game.eventRooms);
+						specialRooms.push(game.specialRooms);
+						
+						if(game.winner=="survivors"){winners[0]+=1;}
+						else{winners[1]+=1;}
+						
+						totalTurns.push(game.totalTurns);
+						hauntTurns.push(game.hauntTurns);
+					});
+					drawGraph();
+				});
+				
+				
+			});
+			
+			function addGame()
+			{
+				
+				rooms.width+=100;
+				rmCtx.clearRect(0,0,rooms.width,rooms.height);
+				regularRooms.push($("#regularRooms").val());
+				itemRooms.push($("#itemRooms").val());
+				omenRooms.push($("#omenRooms").val());
+				eventRooms.push($("#eventRooms").val());
+				specialRooms.push($("#specialRooms").val());
+				
+				winCtx.clearRect(0,0,wins.width,wins.height);
+				if($("#winner").val()=="survivors"){winners[0]+=1;}
+				else if($("#winner").val()=="betrayer"){winners[1]+=1;}
+				
+				turns.width+=100;
+				totalTurns.push($("#totalTurns").val());
+				hauntTurns.push($("#hauntTurns").val());
+				
+				drawGraph();
+			}
+			
+			function createLabels()
+			{
+				labelNames = [];
+				for(var i = 0; i<regularRooms.length; i++)
+				{
+					labelNames.push("Game "+(i+1));
+				}
+			}
+			
+			function drawGraph()
+			{
+				/************************************
+				*The Bar Chart for the types of Rooms
+				************************************/
+				createLabels();
+				var roomData = {
+					labels : labelNames,
+					datasets : [
+						{
+							fillColor : "rgba(250, 42, 56, 0.75)",
+							strokeColor : "rgba(250, 42, 56, 1)",
+							data : regularRooms
+						},
+						{
+							fillColor : "rgba(42, 250, 236, 0.75)",
+							strokeColor : "rgba(42, 250, 236, 1)",
+							data : itemRooms
+						},
+						{
+							fillColor : "rgba(250, 163, 22, 0.75)",
+							strokeColor : "rgba(250, 163, 22, 1)",
+							data : omenRooms
+						},
+						{
+							fillColor : "rgba(22, 168, 22, 0.75)",
+							strokeColor : "rgba(22, 168, 22, 1)",
+							data : eventRooms
+						},
+						{
+							fillColor : "rgba(136, 36, 237, 0.75)",
+							strokeColor : "rgba(136, 36, 237, 1)",
+							data : specialRooms
+						}
+					]
+				};
+				var roomOptions = {
+					scaleOverlay : false,
+					scaleLineColor : "rgba(0,0,0,.5)",
+					scaleGridLineColor : "rgba(0,0,0,.3)",
+					barValueSpacing : 10
+				}
+				
+				/**********************
+				*Pie Chart for Who Wins
+				**********************/
+				var winData = [
+					{
+						value : winners[0],
+						color : "#F36E21"
+					},
+					{
+						value : winners[1],
+						color : "#513127"
+					}
+				]
+				
+				
+				/************************
+				*Line Graph of the Turns
+				************************/
+				var turnData = {
+					labels:labelNames,
+					datasets : [
+						{	
+							fillColor : "rgba(81,49,39, 0.55)",
+							strokeColor : "rgba(81,49,39, 1)",
+							pointColor : "rgba(81,49,39, 1)",
+							pointStrokeColor : "#fff",
+							data : totalTurns
+						},
+						{
+							fillColor : "rgba(243,110,33, 0.65)",
+							strokeColor : "rgba(243,110,33, 1)",
+							pointColor : "rgba(243,110,33, 1)",
+							pointStrokeColor : "#fff",
+							data : hauntTurns
+						}
+					]
+				}
+				
+				var turnOptions = {
+					scaleOverride : true,
+					scaleSteps : Math.max.apply(Math, totalTurns),
+					scaleStepWidth : 1.0,
+					scaleStartValue : 0.0,
+					scaleLineColor : "rgba(0,0,0,1)",
+					scaleGridLineColor : "rgba(0,0,0,.4)"
+				}
+				
+				
+				//Draw the three charts
+				var winnerChart = new Chart(winCtx).Pie(winData);
+				var roomChart = new Chart(rmCtx).Bar(roomData, roomOptions);
+				var turnChart = new Chart(turnCtx).Line(turnData,turnOptions);
+				
+				document.getElementById('winP').innerHTML = "Betrayers: " + winners[1] + " Survivors: " + winners[0] + "";
+				
+			}
+		
+	</script>
+</body>
+</html>
